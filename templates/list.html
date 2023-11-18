@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}List{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <h2>Levy list</h2>
+
+  <ul class="list-group">
+      {% for item in data %}
+          <li class="list-group-item">
+              <a href="{{ url_for('get_detail', levy_id=item._id) }}">{{ item.name }}</a>
+              <form method="post" action="{{ url_for('delete_levy', levy_id=item._id)}}" style="display: inline;">
+                <button type="submit" class="btn btn-danger btn-sm ml-2">Delete</button>
+              </form>
+          </li>
+      {% endfor %}
+  </ul>
+{% endblock %}

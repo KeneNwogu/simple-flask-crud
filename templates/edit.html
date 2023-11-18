@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Edit{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <h2>Edit - {{ name }} </h2>
+    <form method="POST" action="{{ url_for('get_detail', levy_id=id) }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.name.label(class="form-control-label") }}
+            {{ form.name(class="form-control") }}
+            {% for error in form.name.errors %}
+                <small class="form-text text-danger">{{ error }}</small>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            {{ form.burial_name.label(class="form-control-label") }}
+            {{ form.burial_name(class="form-control") }}
+            {% for error in form.burial_name.errors %}
+                <small class="form-text text-danger">{{ error }}</small>
+            {% endfor %}
+        </div>
+      <div class="form-group">
+            {{ form.date.label(class="form-control-label") }}
+            {{ form.date(class="form-control") }}
+            {% for error in form.date.errors %}
+                <small class="form-text text-danger">{{ error }}</small>
+            {% endfor %}
+        </div>
+      <div class="form-group">
+            {{ form.phone_number.label(class="form-control-label") }}
+            {{ form.phone_number(class="form-control") }}
+            {% for error in form.phone_number.errors %}
+                <small class="form-text text-danger">{{ error }}</small>
+            {% endfor %}
+        </div><div class="form-group">
+            {{ form.arrears.label(class="form-control-label") }}
+            {{ form.arrears(class="form-control") }}
+            {% for error in form.arrears.errors %}
+                <small class="form-text text-danger">{{ error }}</small>
+            {% endfor %}
+        </div>
+      <div class="form-group">
+            {{ form.signature.label(class="form-control-label") }}
+            {{ form.signature(class="form-control") }}
+            {% for error in form.signature.errors %}
+                <small class="form-text text-danger">{{ error }}</small>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.comments.label(class="form-control-label") }}
+            {{ form.comments(class="form-control") }}
+            {% for error in form.comments.errors %}
+                <small class="form-text text-danger">{{ error }}</small>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}
