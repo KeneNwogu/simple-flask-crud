@@ -2,7 +2,7 @@ import datetime
 import os
 
 from bson import ObjectId
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_pymongo import PyMongo
 
 from forms import LevyForm
@@ -21,6 +21,7 @@ def create_levy():
         data = {
             "name": form.name.data,
             "burial_name": form.burial_name.data,
+            "amount": form.amount.data,
             "date": datetime.datetime.combine(form.date.data, datetime.time.min),
             "phone_number": form.phone_number.data,
             "arrears": form.arrears.data,
@@ -29,7 +30,7 @@ def create_levy():
         }
 
         mongo.db.levies.insert_one(data)
-        flash("Successfuly created levy", "success")
+        flash("Successfully created levy", "success")
         return redirect(url_for('list_levies'))
     return render_template('create.html', form=form)
 
@@ -47,24 +48,31 @@ def get_detail(levy_id):
     if not levy:
         return url_for('not_found')
 
+    if request.method == "POST":
+        print(request.form)
+        form = LevyForm(request.form, data=levy)
+        if form.validate_on_submit():
+            data = {
+                "name": form.name.data,
+                "burial_name": form.burial_name.data,
+                "amount": form.amount.data,
+                "date": datetime.datetime.combine(form.date.data, datetime.time.min),
+                "phone_number": form.phone_number.data,
+                "arrears": form.arrears.data,
+                "signature": form.signature.data,
+                "comments": form.comments.data
+            }
+            mongo.db.levies.update_one({"_id": ObjectId(levy_id)}, {
+                "$set": data
+            })
+
+            flash("Successfully edited levy", "success")
+            return redirect(url_for('list_levies'))
+
+        else:
+            print(form.errors)
+
     form = LevyForm(data=levy)
-
-    if form.validate_on_submit():
-        data = {
-            "name": form.name.data,
-            "burial_name": form.burial_name.data,
-            "date": datetime.datetime.combine(form.date.data, datetime.time.min),
-            "phone_number": form.phone_number.data,
-            "arrears": form.arrears.data,
-            "signature": form.signature.data,
-            "comments": form.comments.data
-        }
-        mongo.db.levies.update_one({"_id": ObjectId(levy_id)}, {
-            "$set": data
-        })
-
-        flash("Successfuly edited levy", "success")
-        return redirect(url_for('list_levies'))
     return render_template('edit.html', form=form, name=levy['name'], id=levy['_id'])
 
 
@@ -75,8 +83,9 @@ def delete_levy(levy_id):
         return url_for('not_found')
 
     mongo.db.levies.delete_one({"_id": ObjectId(levy_id)})
-    flash("Successfuly delted levy", "success")
+    flash("Successfully deleted levy", "success")
     return redirect(url_for('list_levies'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
